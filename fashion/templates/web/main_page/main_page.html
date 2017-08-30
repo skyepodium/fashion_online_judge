@@ -2,20 +2,170 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <script src="http://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
     <title></title>
-
     <link rel="stylesheet" href="/static/web/css/main_page/main_page.css">
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Bhaina" rel="stylesheet">
+  <script>
+  var total_info = {
+    photo:null,
+    is_upload:false,
+  }
+  </script>
 
   </head>
-  <body>
-    hi
-    <div id="evaluation">
-      평가받기
-    </div>
-    <style media="screen">
 
-    </style>
+  <body>
+
+
+    <div id="nav_all">
+      <div id="nav">
+        <a id="logo" href="/">
+          WINCO
+        </a>
+        <a id="intro">
+          소개
+        </a>
+      </div>
+    </div>
+
+    <div id="main_box">
+      <h1>
+        <span id="head_word1">패션 온라인 재판</span>
+        <span id="head_word2">인공지능이 당신의 패션을</span>
+        <span id="head_word3">평가해서 알려드립니다.</span>
+      </h1>
+    </div>
+
+    <div id="fashion_word">
+      <div id="fashion_title">
+        나의 패션은?
+      </div>
+    </div>
+
+
+    <div id="result">
+    </div>
+    <form id="form1">
+
+        <div id="center">
+
+          <div id="filebox">
+            <label for="uploadImage">사진 업로드</label>
+            <input id="uploadImage" type="file" name="img" multiple="true" required="true">
+          </div>
+
+          <div id="evaluation">
+            평가받기
+          </div>
+
+        </div>
+        <div id="preview">
+    	     <img id="imagePreview" src="#" alt="" />
+        </div>
+
+    </form>
+
+    <script type="text/javascript">
+    function readUploadImage( inputObject ) {
+    	if ( window.File && window.FileReader ) {
+    		if ( inputObject.files && inputObject.files[0]) {
+    			if ( !(/image/i).test(inputObject.files[0].type ) ){
+    				alert("이미지 파일을 선택해 주세요!");
+    				return false;
+    			}
+    			var reader = new FileReader();
+    			reader.onload = function (e) {
+            total_info.photo = e.target.result;
+    				$('#imagePreview').attr('src', e.target.result);
+            total_info.is_upload=true;
+    			}
+    			reader.readAsDataURL(inputObject.files[0]);
+          console.log(inputObject.files[0]);
+    		}
+    	} else {
+    		alert( "미리보기가 안됩니다. 브라우저를 업그레이드 해주세요");
+    	}
+    }
+    $("#uploadImage").change(function(){
+        readUploadImage(this);
+    });
+
+    </script>
+
+    <script>
+    $('#evaluation').click(function (){
+      if(total_info.is_upload == true){
+      makeblob = function (dataURL) {
+                  var BASE64_MARKER = ';base64,';
+                  if (dataURL.indexOf(BASE64_MARKER) == -1) {
+                      var parts = dataURL.split(',');
+                      var contentType = parts[0].split(':')[1];
+                      var raw = decodeURIComponent(parts[1]);
+                      return new Blob([raw], { type: contentType });
+                  }
+                  var parts = dataURL.split(BASE64_MARKER);
+                  var contentType = parts[0].split(':')[1];
+                  var raw = window.atob(parts[1]);
+                  var rawLength = raw.length;
+
+                  var uInt8Array = new Uint8Array(rawLength);
+
+                  for (var i = 0; i < rawLength; ++i) {
+                      uInt8Array[i] = raw.charCodeAt(i);
+                  }
+
+                  return new Blob([uInt8Array], { type: contentType });
+              }
+
+
+      $.ajax({
+        url:"https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/a6935af8-f509-4e24-87b0-ab2b681cb482/image?iterationId=dd3054f7-b975-4943-abf3-7aeef817204c",
+        headers:{
+          'Prediction-Key': '58a0ad9c77734a45a6a992932e20b7bd',
+          'Content-Type': 'application/octet-stream',
+        },
+        type: 'POST',
+        processData: false,
+        contentType: 'application/octet-stream',
+        data: makeblob(total_info.photo),
+        async:false,
+        success: function(data){
+            console.log(data.length);
+        }
+      }).done(function(data){
+        console.log(data);
+        result(data);
+//        console.log(data.Predictions);
+//        console.log(data.Predictions.length);
+      })
+
+    }else{
+      alert('사진을 업로드해주세요')
+      }
+
+    })
+    </script>
+
+<script>
+  function result(a){
+
+  var result;
+    if(a.Predictions[0].Probability<a.Predictions[1].Probability){
+      result = a.Predictions[1].Tag;
+    }else{
+      result = a.Predictions[0].Tag;
+    }
+  var word;
+    if(result == 'best'){
+      word="당신은 패션피플, 베스트 드레서 입니다.";
+    }else{
+      word="당신은 패션테러리스트, 얼굴이 문제가 아닙니다.";
+    }
+    $('#result').html(word);
+  }
+</script>
 
   </body>
 </html>
