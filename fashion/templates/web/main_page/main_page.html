@@ -121,7 +121,7 @@
 
 
       $.ajax({
-        url:"https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/a6935af8-f509-4e24-87b0-ab2b681cb482/image?iterationId=dd3054f7-b975-4943-abf3-7aeef817204c",
+        url:"https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/a6935af8-f509-4e24-87b0-ab2b681cb482/image?iterationId=4b0bad7c-6a12-49cd-b541-7c33ccad7dba",
         headers:{
           'Prediction-Key': '58a0ad9c77734a45a6a992932e20b7bd',
           'Content-Type': 'application/octet-stream',
@@ -150,7 +150,6 @@
 
 <script>
   function result(a){
-
   var result;
     if(a.Predictions[0].Probability<a.Predictions[1].Probability){
       result = a.Predictions[1].Tag;
