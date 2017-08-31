@@ -194,6 +194,7 @@
   margin-right:auto;
   max-width:calc(100% - 40px);
   margin-top:30px;
+  border:none;
 }
 
 @media  screen and (min-width:1080px){
