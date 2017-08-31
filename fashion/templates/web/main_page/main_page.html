@@ -78,7 +78,7 @@
     			var reader = new FileReader();
     			reader.onload = function (e) {
             total_info.photo = e.target.result;
-    				$('#imagePreview').attr('src', e.target.result);
+            $('#imagePreview').attr('src', e.target.result);
             total_info.is_upload=true;
     			}
     			reader.readAsDataURL(inputObject.files[0]);
@@ -96,6 +96,7 @@
 
     <script>
     $('#evaluation').click(function (){
+
       if(total_info.is_upload == true){
       makeblob = function (dataURL) {
                   var BASE64_MARKER = ';base64,';
@@ -163,7 +164,15 @@
       word="당신은 패션테러리스트, 얼굴이 문제가 아닙니다.";
     }
     $('#result').html(word);
+    $('#result').css('display','block');
+
   }
+</script>
+
+<script>
+  $('label').click(function(){
+    $('#result').css('display','none');
+  })
 </script>
 
   </body>
